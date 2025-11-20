@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:url_strategy/url_strategy.dart'; // استيراد مكتبة استراتيجية الروابط
 import 'screens/login_screen.dart';
 import 'screens/main_layout.dart';
-import 'services/mock_auth_service.dart';
 import 'theme/app_theme.dart';
 
 void main() {
+  // تفعيل استراتيجية المسار لإزالة # من روابط الويب
+  setPathUrlStrategy();
   runApp(const SanadManagerApp());
 }
 
@@ -70,14 +72,17 @@ class _SanadManagerAppState extends State<SanadManagerApp> {
       ],
       
       // التوجيه
-      home: _isAuthenticated 
-          ? MainLayout(
-              onLogout: logout, 
-              onThemeChanged: toggleTheme, 
-              onLanguageChanged: setLocale,
-              currentLocale: _locale,
-            ) 
-          : LoginScreen(onLogin: login),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => _isAuthenticated 
+            ? MainLayout(
+                onLogout: logout, 
+                onThemeChanged: toggleTheme, 
+                onLanguageChanged: setLocale,
+                currentLocale: _locale,
+              ) 
+            : LoginScreen(onLogin: login),
+      },
     );
   }
 }

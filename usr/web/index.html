@@ -1,38 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="نظام إدارة المطبعة المتكامل Sanad Manager">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="couldai_user_app">
+  <meta name="apple-mobile-web-app-title" content="Sanad Manager">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>couldai_user_app</title>
+  <title>Sanad Manager</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- تحسين شاشة التحميل -->
+  <style>
+    body {
+      background-color: #F3F4F6; /* لون خلفية فاتح */
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+    }
+    .loading-container {
+      text-align: center;
+    }
+    .loader {
+      border: 5px solid #E5E7EB;
+      border-top: 5px solid #1E3A8A; /* Sanad Blue */
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px auto;
+    }
+    .loading-text {
+      color: #1E3A8A;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* الوضع الداكن */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #111827;
+      }
+      .loader {
+        border-color: #374151;
+        border-top-color: #F97316; /* Sanad Orange */
+      }
+      .loading-text {
+        color: #F3F4F6;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="loading-container">
+    <div class="loader"></div>
+    <div class="loading-text">Sanad Manager</div>
+  </div>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
