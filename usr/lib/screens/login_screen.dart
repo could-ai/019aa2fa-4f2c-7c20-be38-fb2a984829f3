@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/mock_auth_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback onLogin;
@@ -11,8 +11,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController(text: 'admin@sanad.dz');
-  final _passwordController = TextEditingController(text: 'password123');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
@@ -25,22 +25,29 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = null;
     });
 
-    // محاكاة الاتصال بالـ API
-    final success = await MockAuthService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
+    try {
+      final response = await Supabase.instance.client.auth.signInWithPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
 
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (success) {
+      if (mounted) {
+        // النجاح يتم التعامل معه عبر auth state listener في main.dart
+        // ولكن يمكننا استدعاء onLogin كإجراء احتياطي أو للتنقل اليدوي إذا لزم الأمر
         widget.onLogin();
-      } else {
+      }
+    } on AuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'حدث خطأ غير متوقع: $e';
+      });
+    } finally {
+      if (mounted) {
         setState(() {
-          _errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+          _isLoading = false;
         });
       }
     }
@@ -48,8 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -67,7 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // الشعار (نص مؤقت)
                       Text(
                         'Sanad Manager',
                         textAlign: TextAlign.center,
@@ -87,8 +91,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      
-                      // حقول الإدخال
                       TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(
@@ -117,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                       ),
-                      
                       if (_errorMessage != null) ...[
                         const SizedBox(height: 16),
                         Text(
@@ -126,10 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           textAlign: TextAlign.center,
                         ),
                       ],
-                      
                       const SizedBox(height: 24),
-                      
-                      // زر الدخول
                       ElevatedButton(
                         onPressed: _isLoading ? null : _handleLogin,
                         style: ElevatedButton.styleFrom(
